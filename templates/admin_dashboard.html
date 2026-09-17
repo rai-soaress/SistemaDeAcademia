@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Administrativo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+    <div class="brand-wrap">
+        <img class="brand-logo brand-logo--header" src="{{ url_for('static', filename='img/logo_fit_trainer.png') }}" alt="Fit Trainer logo">
+        <div>
+            <span class="eyebrow">Fit Trainer</span>
+            <h1>Painel Administrativo</h1>
+        </div>
+    </div>
+
+    <nav class="topbar-actions">
+        <a href="{{ url_for('despesa.listar') }}">Despesas</a>
+        <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+        <a class="logout" href="{{ url_for('auth.sair') }}">Sair</a>
+    </nav>
+</header>
+
+<main class="dashboard">
+    <section class="summary">
+        <div>
+            <h2>Resumo financeiro</h2>
+            <p>Balanco do mes selecionado: {{ mes_atual }}</p>
+        </div>
+
+        <div class="summary-actions">
+            <form class="month-filter" method="get" action="{{ url_for('admin.dashboard') }}">
+                <label for="mes">Consultar mes</label>
+                <input id="mes" type="month" name="mes" value="{{ mes_selecionado }}">
+                <button type="submit">Consultar</button>
+            </form>
+            <a class="primary-action" href="{{ url_for('despesa.cadastrar') }}">Cadastrar despesa</a>
+        </div>
+    </section>
+
+    <section class="cards">
+        <article class="card">
+            <span>Alunos</span>
+            <strong>{{ total_alunos }}</strong>
+            <a href="{{ url_for('aluno.listar') }}">Gerenciar</a>
+        </article>
+
+        <article class="card">
+            <span>Planos</span>
+            <strong>{{ total_planos }}</strong>
+            <a href="{{ url_for('plano.listar') }}">Gerenciar</a>
+        </article>
+
+        <article class="card">
+            <span>Pagamentos</span>
+            <strong>{{ total_pagamentos }}</strong>
+            <a href="{{ url_for('pagamento.listar') }}">Gerenciar</a>
+        </article>
+
+        <article class="card">
+            <span>Treinos</span>
+            <strong>{{ total_treinos }}</strong>
+            <a href="{{ url_for('treino.listar') }}">Gerenciar</a>
+        </article>
+
+        <article class="card finance danger alert-card">
+            <span>Alunos inadimplentes</span>
+            <strong>{{ alunos_inadimplentes }}</strong>
+            <a href="{{ url_for('pagamento.listar', status='atrasados') }}">Conferir</a>
+        </article>
+
+        <article class="card finance income">
+            <span>Entradas do mes</span>
+            <strong>R$ {{ "%.2f"|format(entradas_mes) }}</strong>
+            <a href="{{ url_for('pagamento.listar', status='pagos') }}">Ver pagos</a>
+        </article>
+
+        <article class="card finance expense">
+            <span>Saidas do mes</span>
+            <strong>R$ {{ "%.2f"|format(saidas_mes) }}</strong>
+            <a href="{{ url_for('despesa.listar') }}">Ver despesas</a>
+        </article>
+
+        <article class="card finance profit">
+            <span>Lucro do mes</span>
+            <strong>R$ {{ "%.2f"|format(lucro_mes) }}</strong>
+            <a href="{{ url_for('despesa.cadastrar') }}">Nova saida</a>
+        </article>
+
+        <article class="card finance warning">
+            <span>Pagamentos pendentes</span>
+            <strong>R$ {{ "%.2f"|format(pagamentos_pendentes) }}</strong>
+            <a href="{{ url_for('pagamento.listar', status='pendentes') }}">Conferir</a>
+        </article>
+
+        <article class="card finance danger alert-card">
+            <span>Pagamentos atrasados</span>
+            <strong>R$ {{ "%.2f"|format(pagamentos_atrasados) }}</strong>
+            <a href="{{ url_for('pagamento.listar', status='atrasados') }}">Conferir</a>
+        </article>
+    </section>
+
+    <section class="financial-table">
+        <div class="table-header">
+            <div>
+                <h2>Resumo do mes</h2>
+                <p>Entradas, saidas e lucro em {{ mes_atual }}</p>
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mes consultado</th>
+                        <th>Entradas</th>
+                        <th>Saidas</th>
+                        <th>Lucro</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ mes_atual }}</td>
+                        <td class="positive">R$ {{ "%.2f"|format(entradas_mes) }}</td>
+                        <td class="negative">R$ {{ "%.2f"|format(saidas_mes) }}</td>
+                        <td class="{{ 'positive' if lucro_mes >= 0 else 'negative' }}">
+                            R$ {{ "%.2f"|format(lucro_mes) }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</main>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

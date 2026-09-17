@@ -1,0 +1,445 @@
+:root {
+    --bg-main: #f3f5f7;
+    --bg-card: #ffffff;
+    --bg-muted: #f8fafc;
+    --text-primary: #16181d;
+    --text-secondary: #6b7280;
+    --border: #e5e7eb;
+    --primary: #e5ad27;
+    --primary-hover: #cf981d;
+    --success: #16a34a;
+    --danger: #dc2626;
+    --warning: #d97706;
+    --shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+    background: var(--bg-main);
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+
+a {
+    text-decoration: none;
+}
+
+.topbar {
+    align-items: center;
+    background: linear-gradient(135deg, #14171d 0%, #111318 100%);
+    border-bottom: 1px solid rgba(229, 173, 39, 0.2);
+    color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    min-height: 74px;
+    padding: 18px 28px;
+}
+
+.brand-wrap {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+    min-height: 62px;
+}
+
+.brand-wrap > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.brand-wrap span,
+.eyebrow {
+    color: var(--primary);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+.topbar h1 {
+    color: #ffffff;
+    font-size: clamp(1.4rem, 2vw, 2rem);
+    line-height: 1.2;
+    margin-top: 4px;
+}
+
+.brand-logo--header {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+    display: block;
+    flex-shrink: 0;
+    max-height: 72px;
+    max-width: 115px;
+    object-fit: contain;
+    padding: 4px;
+}
+
+.topbar nav {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.topbar nav a {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    color: #e5e7eb;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 14px;
+}
+
+.topbar nav a:last-child {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #111111;
+    font-weight: 700;
+}
+
+.dashboard {
+    width: min(1480px, calc(100% - 48px));
+    margin: 32px auto 64px;
+}
+
+.summary {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 26px 28px;
+}
+
+.summary h2,
+.table-header h2 {
+    color: var(--text-primary);
+    font-size: clamp(1.35rem, 2vw, 1.9rem);
+    letter-spacing: -0.02em;
+}
+
+.summary p,
+.table-header p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-top: 6px;
+}
+
+.summary-actions {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.month-filter {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.month-filter label {
+    display: block;
+    width: 100%;
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.month-filter input,
+.month-filter button,
+.primary-action {
+    border-radius: 10px;
+    font-size: 0.95rem;
+    min-height: 42px;
+    padding: 0 14px;
+}
+
+.month-filter input {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    min-width: 170px;
+}
+
+.month-filter button,
+.primary-action {
+    background: var(--primary);
+    border: none;
+    color: #111111;
+    cursor: pointer;
+    font-weight: 700;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.primary-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.month-filter button:hover,
+.primary-action:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 24px;
+}
+
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    min-height: 176px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
+}
+
+.card.alert-card {
+    background: linear-gradient(180deg, #ffffff 0%, #fffafa 100%);
+    border-color: #f0d6d6;
+}
+
+.card.alert-card::before {
+    background: var(--danger);
+}
+
+.card.alert-card span {
+    color: var(--text-secondary);
+    line-height: 1.35;
+    max-width: none;
+}
+
+.card.alert-card strong {
+    color: var(--danger);
+}
+
+.card.alert-card a {
+    background: rgba(220, 38, 38, 0.08);
+    border-color: rgba(220, 38, 38, 0.18);
+    color: #991b1b;
+}
+
+.card.alert-card a:hover {
+    background: rgba(220, 38, 38, 0.14);
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 4px;
+    background: var(--primary);
+}
+
+.card span {
+    align-items: center;
+    color: var(--text-secondary);
+    display: flex;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.35;
+    min-height: 30px;
+    text-transform: uppercase;
+}
+
+.card strong {
+    color: var(--text-primary);
+    font-size: clamp(2rem, 2vw, 2.6rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.15;
+    margin: 16px 0 18px;
+    overflow-wrap: anywhere;
+}
+
+.card a {
+    align-self: flex-start;
+    background: rgba(229, 173, 39, 0.12);
+    border: 1px solid rgba(229, 173, 39, 0.28);
+    border-radius: 9px;
+    color: #7a560f;
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-top: auto;
+    padding: 8px 12px;
+}
+
+.card.income::before,
+.card.profit::before,
+.card.warning::before,
+.card.expense::before,
+.card.danger::before {
+    background: var(--primary);
+}
+
+.card.income::before {
+    background: var(--success);
+}
+
+.card.expense::before,
+.card.danger::before {
+    background: var(--danger);
+}
+
+.card.warning::before {
+    background: var(--warning);
+}
+
+.card.income strong,
+.positive {
+    color: var(--success);
+}
+
+.card.expense strong,
+.negative,
+.card.danger strong {
+    color: var(--danger);
+}
+
+.card.warning strong {
+    color: var(--warning);
+}
+
+.card.profit strong {
+    color: #7c5c13;
+}
+
+.financial-table {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    margin-top: 24px;
+    overflow: hidden;
+}
+
+.table-header {
+    background: #f8fafc;
+    border-bottom: 1px solid var(--border);
+    padding: 20px 24px;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+th {
+    background: #f5f7fa;
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+td {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+tbody tr:hover {
+    background: #fafafa;
+}
+
+@media (max-width: 720px) {
+    .topbar {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 18px;
+    }
+
+    .topbar nav,
+    .topbar nav a {
+        width: 100%;
+    }
+
+    .topbar nav a {
+        text-align: center;
+    }
+
+    .brand-logo--header {
+        max-height: 58px;
+        max-width: 92px;
+    }
+
+    .dashboard {
+        width: min(100% - 24px, 560px);
+        margin-top: 20px;
+    }
+
+    .summary {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .summary-actions,
+    .month-filter,
+    .month-filter input,
+    .month-filter button,
+    .primary-action {
+        width: 100%;
+    }
+
+    .month-filter input,
+    .month-filter button,
+    .primary-action {
+        text-align: center;
+    }
+}
+
+@media (min-width: 721px) and (max-width: 1100px) {
+    .cards {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}

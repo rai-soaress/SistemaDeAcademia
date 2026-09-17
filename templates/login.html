@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body class="login-page">
+
+<div class="login-container">
+    <div class="brand-lockup">
+        <img src="{{ url_for('static', filename='img/logo_fit_trainer.png') }}" alt="Fit Trainer logo" class="brand-logo brand-logo--hero">
+        <span class="login-eyebrow">Área administrativa</span>
+    </div>
+
+    <div class="login-heading">
+        <h1>Bem-vindo de volta</h1>
+        <p>Acesse o painel para acompanhar sua academia.</p>
+    </div>
+
+    <form action="{{ url_for('auth.logar') }}" method="POST">
+        <label for="email">E-mail</label>
+        <input id="email" type="email" name="email" placeholder="seu@email.com" autocomplete="email" required>
+
+        <label for="senha">Senha</label>
+        <input id="senha" type="password" name="senha" placeholder="Digite sua senha" autocomplete="current-password" required>
+
+        <button type="submit">Entrar</button>
+    </form>
+
+    <a class="register-link" href="{{ url_for('auth.cadastro_admin') }}">Criar conta administrador</a>
+</div>
+
+</body>
+</html>

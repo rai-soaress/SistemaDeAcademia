@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alunos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/internal_header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/alunos.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+    <div class="brand-wrap">
+        <img class="logo-interna" src="{{ url_for('static', filename='img/logo_fit_trainer.png') }}" alt="Fit Trainer logo">
+        <div>
+            <span>Academia</span>
+            <h1>Alunos</h1>
+        </div>
+    </div>
+    <nav>
+        <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('pagamento.listar') }}">Pagamentos</a>
+    </nav>
+</header>
+
+<form method="GET">
+    <input id="buscaAluno" type="text" name="busca" value="{{ request.args.get('busca', '') }}" placeholder="Buscar aluno" autocomplete="off">
+    <button type="submit">Buscar</button>
+</form>
+
+<a class="btn" href="{{ url_for('aluno.cadastrar') }}">Cadastrar aluno</a>
+
+<table>
+    <tr>
+        <th>Nome</th>
+        <th>Email</th>
+        <th>Telefone</th>
+        <th>Plano</th>
+        <th>Pagamento</th>
+        <th>Acoes</th>
+    </tr>
+
+    <tbody id="listaAlunos">
+    {% for aluno in alunos %}
+    {% set pagamento = pagamentos_atuais.get(aluno.id) %}
+    {% set status = (pagamento.status or '')|lower if pagamento else '' %}
+    <tr data-nome-aluno="{{ aluno.nome|lower }}">
+        <td>{{ aluno.nome }}</td>
+        <td>{{ aluno.email }}</td>
+        <td>{{ aluno.telefone }}</td>
+        <td>
+            {% if aluno.plano %}
+                {{ aluno.plano.nome }} - R$ {{ "%.2f"|format(aluno.plano.valor) }}
+            {% else %}
+                Sem plano
+            {% endif %}
+        </td>
+        <td>
+            {% if pagamento %}
+                <span class="status {{ 'status-pago' if status == 'pago' else 'status-atrasado' if status == 'atrasado' else 'status-pendente' }}">
+                    {{ pagamento.status }}
+                </span>
+                <small>Vencimento: {{ pagamento.data }}</small>
+
+                {% if status != 'pago' %}
+                    <form class="inline-form" method="POST" action="{{ url_for('pagamento.baixar', id=pagamento.id) }}">
+                        <select name="forma_pagamento" required>
+                            <option value="">Como foi pago?</option>
+                            <option value="Pix">Pix</option>
+                            <option value="Dinheiro">Dinheiro</option>
+                            <option value="Cartao">Cartao</option>
+                            <option value="Transferencia">Transferencia</option>
+                        </select>
+
+                        <button
+                            type="submit"
+                            class="btn-baixa"
+                            data-confirm="Confirmar baixa deste aluno?"
+                        >
+                            Dar baixa
+                        </button>
+                    </form>
+                {% endif %}
+            {% else %}
+                <span class="status status-pendente">Sem cobranca</span>
+            {% endif %}
+        </td>
+        <td>
+            <a href="{{ url_for('aluno.editar', id=aluno.id) }}">Editar</a>
+            <form method="post" action="{{ url_for('aluno.excluir', id=aluno.id) }}" class="inline-form">
+                <button class="delete-link" data-confirm="Tem certeza que deseja excluir este aluno?" type="submit">Excluir</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+    <tr id="nenhumAluno" hidden>
+        <td colspan="6">Nenhum aluno encontrado.</td>
+    </tr>
+    </tbody>
+</table>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script>
+const buscaAluno = document.getElementById("buscaAluno");
+const linhasAlunos = document.querySelectorAll("#listaAlunos tr[data-nome-aluno]");
+const nenhumAluno = document.getElementById("nenhumAluno");
+
+buscaAluno.addEventListener("input", () => {
+    const termo = buscaAluno.value.trim().toLocaleLowerCase();
+    let encontrados = 0;
+
+    linhasAlunos.forEach((linha) => {
+        const encontrado = linha.dataset.nomeAluno.includes(termo);
+        linha.hidden = !encontrado;
+        if (encontrado) encontrados += 1;
+    });
+
+    nenhumAluno.hidden = encontrados > 0;
+});
+</script>
+</body>
+</html>

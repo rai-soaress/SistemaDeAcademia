@@ -1,0 +1,7 @@
+body{font-family:Arial;background:#fef9c3;display:flex;justify-content:center;align-items:center;height:100vh}
+.form-container{width:450px;background:white;padding:35px;border-radius:15px;box-shadow:0 0 15px rgba(0,0,0,.12)}
+h1{text-align:center;color:#713f12;margin-bottom:25px}
+input,select,button{width:100%;padding:13px;margin-bottom:15px;border:1px solid #ccc;border-radius:8px}
+button{background:#ca8a04;color:white;border:none;cursor:pointer}
+button:hover{background:#a16207}
+a{display:block;text-align:center;text-decoration:none;color:#713f12}

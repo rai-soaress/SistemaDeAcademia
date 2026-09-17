@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamentos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/internal_header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pagamentos.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+    <div class="brand-wrap">
+        <img class="logo-interna" src="{{ url_for('static', filename='img/logo_fit_trainer.png') }}" alt="Fit Trainer logo">
+        <div>
+            <span>Financeiro</span>
+            <h1>Pagamentos</h1>
+        </div>
+    </div>
+
+    <nav>
+        <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('aluno.cadastrar') }}">Cadastrar aluno</a>
+    </nav>
+</header>
+
+<main class="page">
+    <section class="summary-cards" aria-label="Resumo dos pagamentos">
+        <article class="summary-card">
+            <span>Total</span>
+            <strong>{{ contadores.todos }}</strong>
+        </article>
+        <article class="summary-card warning">
+            <span>Pendentes</span>
+            <strong>{{ contadores.pendentes }}</strong>
+        </article>
+        <article class="summary-card danger">
+            <span>Atrasados</span>
+            <strong>{{ contadores.atrasados }}</strong>
+        </article>
+        <article class="summary-card success">
+            <span>Pagos</span>
+            <strong>{{ contadores.pagos }}</strong>
+        </article>
+    </section>
+
+    <nav class="payment-tabs" aria-label="Filtros de pagamentos">
+        <a class="{{ 'active' if status_atual == 'todos' else '' }}" href="{{ url_for('pagamento.listar') }}">
+            Todos
+            <span>{{ contadores.todos }}</span>
+        </a>
+        <a class="{{ 'active' if status_atual == 'pendentes' else '' }}" href="{{ url_for('pagamento.listar', status='pendentes') }}">
+            Pendentes
+            <span>{{ contadores.pendentes }}</span>
+        </a>
+        <a class="{{ 'active' if status_atual == 'atrasados' else '' }}" href="{{ url_for('pagamento.listar', status='atrasados') }}">
+            Atrasados
+            <span>{{ contadores.atrasados }}</span>
+        </a>
+        <a class="{{ 'active' if status_atual == 'pagos' else '' }}" href="{{ url_for('pagamento.listar', status='pagos') }}">
+            Pagos
+            <span>{{ contadores.pagos }}</span>
+        </a>
+    </nav>
+
+    {% if historicos %}
+        {% for historico in historicos %}
+            <section class="student-history">
+                <div class="card-header">
+                    <div>
+                        <span class="history-label">Historico de pagamentos</span>
+                        <h2>{{ historico.aluno.nome }}</h2>
+
+                        {% if historico.aluno.plano %}
+                            <p>Plano: {{ historico.aluno.plano.nome }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="history-summary">
+                        <span>Pago: <b>R$ {{ "%.2f"|format(historico.total_pago) }}</b></span>
+                        <span>Em aberto: <b>R$ {{ "%.2f"|format(historico.total_em_aberto) }}</b></span>
+                    </div>
+                </div>
+
+                <div class="payment-history-list">
+                    {% for pagamento in historico.pagamentos %}
+                        {% set status = (pagamento.status or '')|lower %}
+                        <article class="payment-entry {{ 'paid' if status == 'pago' else 'late' if status == 'atrasado' else 'pending' }}">
+                            <div class="payment-entry-main">
+                                <span class="badge {{ 'badge-paid' if status == 'pago' else 'badge-late' if status == 'atrasado' else 'badge-pending' }}">{{ pagamento.status }}</span>
+                                <b>R$ {{ "%.2f"|format(pagamento.valor) }}</b>
+                                <span>Vencimento: {{ pagamento.data }}</span>
+                                {% if pagamento.data_pagamento %}<span>Pago em: {{ pagamento.data_pagamento }}</span>{% endif %}
+                                <span>Forma: {{ pagamento.forma_pagamento or "Nao informado" }}</span>
+                            </div>
+                            <div class="actions">
+                                {% if status != 'pago' %}
+                                    <form method="POST" action="{{ url_for('pagamento.baixar', id=pagamento.id) }}">
+                                        <select name="forma_pagamento" required>
+                                            <option value="">Como foi pago?</option>
+                                            <option value="Pix">Pix</option>
+                                            <option value="Dinheiro">Dinheiro</option>
+                                            <option value="Cartao">Cartao</option>
+                                            <option value="Transferencia">Transferencia</option>
+                                        </select>
+                                        <button type="submit" class="btn-baixa" data-confirm="Confirmar baixa deste pagamento?">Dar baixa</button>
+                                    </form>
+                                {% endif %}
+                                <form method="post" action="{{ url_for('pagamento.excluir', id=pagamento.id) }}" class="inline-form">
+                                    <button class="excluir delete-link" data-confirm="Tem certeza que deseja excluir este pagamento?" type="submit">Excluir</button>
+                                </form>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endfor %}
+    {% else %}
+        <section class="empty">
+            {% if status_atual == 'pendentes' %}
+                <h2>Nenhum pagamento pendente</h2>
+                <p>Quando houver cobrancas aguardando pagamento, elas aparecem aqui.</p>
+            {% elif status_atual == 'atrasados' %}
+                <h2>Nenhum pagamento atrasado</h2>
+                <p>Cobrancas vencidas aparecem nesta aba para conferencia.</p>
+            {% elif status_atual == 'pagos' %}
+                <h2>Nenhum pagamento pago</h2>
+                <p>O historico de pagamentos baixados aparece aqui.</p>
+            {% else %}
+                <h2>Nenhuma cobranca gerada</h2>
+                <p>Cadastre um aluno com plano para gerar a cobranca automaticamente.</p>
+            {% endif %}
+            <a href="{{ url_for('aluno.cadastrar') }}">Cadastrar aluno</a>
+        </section>
+    {% endif %}
+</main>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>

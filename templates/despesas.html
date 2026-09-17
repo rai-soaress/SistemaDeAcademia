@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Despesas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/despesas.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+    <div>
+        <span class="eyebrow">Financeiro</span>
+        <h1>Despesas</h1>
+    </div>
+
+    <nav>
+        <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+        <a class="primary" href="{{ url_for('despesa.cadastrar') }}">Cadastrar despesa</a>
+    </nav>
+</header>
+
+<main class="page">
+    <section class="toolbar">
+        <form method="GET" action="{{ url_for('despesa.listar') }}">
+            <input
+                type="text"
+                name="busca"
+                placeholder="Buscar por descricao"
+                value="{{ busca }}"
+            >
+
+            <label class="month-field" for="mes">Mes</label>
+            <input id="mes" type="month" name="mes" value="{{ mes_selecionado }}">
+
+            <select name="categoria">
+                <option value="">Todas as categorias</option>
+                {% for categoria in categorias %}
+                    <option value="{{ categoria }}" {% if categoria == categoria_selecionada %}selected{% endif %}>
+                        {{ categoria }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Buscar</button>
+        </form>
+
+        <div class="total-box">
+            <span>Total de {{ mes_atual }}</span>
+            <strong>R$ {{ "%.2f"|format(total_despesas) }}</strong>
+        </div>
+    </section>
+
+    <section class="expense-history">
+        <div class="history-heading">
+            <div>
+                <h2>Historico de despesas</h2>
+                <p>Despesas registradas em {{ mes_atual }}</p>
+            </div>
+            <strong>{{ despesas|length }} lançamento(s)</strong>
+        </div>
+    </section>
+
+    <section class="list">
+        {% if despesas %}
+            {% for despesa in despesas %}
+                <article class="expense-card">
+                    <div class="expense-main">
+                        <span>{{ despesa.categoria }}</span>
+                        <h2>{{ despesa.descricao }}</h2>
+                        <p>{{ despesa.observacao or "Sem observacao" }}</p>
+                    </div>
+
+                    <div class="expense-meta">
+                        <strong>R$ {{ "%.2f"|format(despesa.valor) }}</strong>
+                        <span>{{ despesa.data.strftime("%d/%m/%Y") }}</span>
+                    </div>
+
+                    <div class="actions">
+                        <a href="{{ url_for('despesa.editar', id=despesa.id) }}">Editar</a>
+                        <form method="post" action="{{ url_for('despesa.excluir', id=despesa.id) }}" class="inline-form">
+                            <button class="delete-link" data-confirm="Tem certeza que deseja excluir esta despesa?" type="submit">Excluir</button>
+                        </form>
+                    </div>
+                </article>
+            {% endfor %}
+        {% else %}
+            <div class="empty">
+                <h2>Nenhuma despesa encontrada</h2>
+                <p>Cadastre uma saida para acompanhar o balanco financeiro.</p>
+                <a href="{{ url_for('despesa.cadastrar') }}">Cadastrar despesa</a>
+            </div>
+        {% endif %}
+    </section>
+</main>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

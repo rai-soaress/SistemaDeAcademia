@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Despesa</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/editar_despesa.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+    <div>
+        <span class="eyebrow">Financeiro</span>
+        <h1>Editar despesa</h1>
+    </div>
+
+    <nav>
+        <a href="{{ url_for('despesa.listar') }}">Despesas</a>
+        <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+    </nav>
+</header>
+
+<main class="form-page">
+    <form class="form-card" method="POST" action="{{ url_for('despesa.editar', id=despesa.id) }}">
+        <label for="descricao">Descricao</label>
+        <input id="descricao" type="text" name="descricao" maxlength="150" value="{{ despesa.descricao }}" required>
+
+        <div class="grid">
+            <div>
+                <label for="valor">Valor</label>
+                <input id="valor" type="number" name="valor" min="0" step="0.01" value="{{ "%.2f"|format(despesa.valor) }}" required>
+            </div>
+
+            <div>
+                <label for="data">Data</label>
+                <input id="data" type="date" name="data" value="{{ despesa.data.isoformat() }}" required>
+            </div>
+        </div>
+
+        <label for="categoria">Categoria</label>
+        <select id="categoria" name="categoria" required>
+            {% for categoria in categorias %}
+                <option value="{{ categoria }}" {% if categoria == despesa.categoria %}selected{% endif %}>
+                    {{ categoria }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label for="observacao">Observacao</label>
+        <textarea id="observacao" name="observacao" rows="4">{{ despesa.observacao }}</textarea>
+
+        <div class="actions">
+            <a href="{{ url_for('despesa.listar') }}">Cancelar</a>
+            <button type="submit">Atualizar despesa</button>
+        </div>
+    </form>
+</main>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

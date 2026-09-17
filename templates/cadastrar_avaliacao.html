@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Avaliacao Fisica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/treinos.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+    <div>
+        <span>Avaliacao</span>
+        <h1>Nova avaliacao fisica</h1>
+    </div>
+    <nav>
+        <a href="{{ url_for('treino.listar') }}">Voltar</a>
+    </nav>
+</header>
+
+<main class="page">
+    <form class="assessment-form" method="POST">
+        <section>
+            <h2>Dados gerais</h2>
+            <div class="form-grid">
+                <label>Aluno
+                    <select name="aluno_id" required>
+                        <option value="">Selecione o aluno</option>
+                        {% for aluno in alunos %}
+                            <option value="{{ aluno.id }}">{{ aluno.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label>Nome <input type="text" name="nome" required></label>
+                <label>Data de nascimento <input type="date" name="data_nascimento"></label>
+                <label>Responsavel tecnico <input type="text" name="responsavel_tecnico"></label>
+                <label>Data de inicio <input type="date" name="data_inicio"></label>
+                <label>Data da avaliacao <input type="date" name="data_avaliacao" value="{{ data_atual }}"></label>
+                <label>Objetivo
+                    <select name="objetivo">
+                        {% for objetivo in objetivos %}
+                            <option value="{{ objetivo }}">{{ objetivo }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </div>
+            <textarea name="observacoes" placeholder="Observacoes"></textarea>
+        </section>
+
+        <section>
+            <h2>Composicao corporal</h2>
+            <div class="form-grid">
+                <label>Peso <input type="number" name="peso" step="0.01"></label>
+                <label>Altura <input type="number" name="altura" step="0.01"></label>
+            </div>
+        </section>
+
+        <section>
+            <h2>Perimetria corporal</h2>
+            <div class="form-grid">
+                <label>Braco <input type="number" name="braco" step="0.01"></label>
+                <label>Antebraco <input type="number" name="antebraco" step="0.01"></label>
+                <label>Panturrilha <input type="number" name="panturrilha" step="0.01"></label>
+                <label>Perna <input type="number" name="perna" step="0.01"></label>
+                <label>Torax <input type="number" name="torax" step="0.01"></label>
+                <label>Abdomen <input type="number" name="abdomen" step="0.01"></label>
+                <label>Cintura <input type="number" name="cintura" step="0.01"></label>
+                <label>Quadril <input type="number" name="quadril" step="0.01"></label>
+            </div>
+        </section>
+
+        <button class="submit-btn" type="submit">Salvar avaliacao</button>
+    </form>
+</main>
+
+</body>
+</html>

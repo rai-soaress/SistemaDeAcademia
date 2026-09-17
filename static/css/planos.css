@@ -1,0 +1,133 @@
+:root {
+    --bg-main: #f3f5f7;
+    --bg-card: #ffffff;
+    --text-primary: #16181d;
+    --text-secondary: #6b7280;
+    --border: #e5e7eb;
+    --primary: #e5ad27;
+    --primary-hover: #cf981d;
+    --danger: #dc2626;
+    --shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+    background: var(--bg-main);
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+
+a {
+    text-decoration: none;
+}
+
+.page {
+    width: min(1500px, calc(100% - 32px));
+    margin: 28px auto 56px;
+}
+
+.plans-grid {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.plan-card,
+.empty {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+}
+
+.plan-card {
+    padding: 22px;
+}
+
+.plan-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.plan-header span {
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.plan-header h2 {
+    color: var(--text-primary);
+    font-size: 1.7rem;
+    margin-top: 8px;
+}
+
+.plan-header strong {
+    color: #7a560f;
+    font-size: 1.7rem;
+    white-space: nowrap;
+}
+
+.plan-meta {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text-secondary);
+    display: grid;
+    gap: 8px;
+    margin: 18px 0;
+    padding: 14px;
+}
+
+.excluir {
+    background: rgba(220, 38, 38, 0.08);
+    border: 1px solid rgba(220, 38, 38, 0.16);
+    border-radius: 10px;
+    color: var(--danger);
+    cursor: pointer;
+    font-weight: 700;
+    min-height: 38px;
+    padding: 0 12px;
+}
+
+.empty {
+    padding: 34px;
+    text-align: center;
+}
+
+.empty h2 {
+    color: var(--text-primary);
+    font-size: clamp(1.5rem, 2vw, 2rem);
+}
+
+.empty p {
+    color: var(--text-secondary);
+    margin: 8px 0 18px;
+}
+
+.empty a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary);
+    border-radius: 10px;
+    color: #111111;
+    font-weight: 700;
+    min-height: 42px;
+    padding: 0 16px;
+}
+
+@media (max-width: 720px) {
+    .plan-header {
+        flex-direction: column;
+    }
+}

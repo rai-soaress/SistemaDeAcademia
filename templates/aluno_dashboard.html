@@ -1,0 +1,56 @@
+<!-- Aluno Dashboard Template -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel do Aluno</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/aluno_dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+
+<div class="dashboard">
+    <aside>
+        <h2>PowerFit</h2>
+        <a href="#">Meu painel</a>
+        <a href="#">Meu plano</a>
+        <a href="#">Mensalidades</a>
+        <a href="#">Pagamentos</a>
+        <a href="#">Meus treinos</a>
+        <a href="{{ url_for('auth.sair') }}">Sair</a>
+    </aside>
+
+    <main>
+        <h1>Painel do Aluno</h1>
+        <p>Bem-vindo a sua area exclusiva.</p>
+
+        <div class="cards">
+            <div class="card">
+                <h3>Plano atual</h3>
+                <span>Mensal</span>
+            </div>
+
+            <div class="card">
+                <h3>Mensalidade</h3>
+                <span>Pendente</span>
+            </div>
+
+            <div class="card">
+                <h3>Proximo vencimento</h3>
+                <span>--/--/----</span>
+            </div>
+        </div>
+
+        <section class="area-info">
+            <h2>Resumo</h2>
+            <p>Aqui o aluno podera visualizar seus dados, plano, mensalidades, historico de pagamentos e treinos cadastrados.</p>
+
+            <button>Pagar mensalidade</button>
+        </section>
+    </main>
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>

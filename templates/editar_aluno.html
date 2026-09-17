@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Aluno</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cadastrar_aluno.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+
+<div class="form-container">
+    <h1>Editar Aluno</h1>
+
+    <form method="POST">
+        <input type="text" name="nome" value="{{ aluno.nome }}" required>
+        <input type="email" name="email" value="{{ aluno.email }}">
+        <input type="text" name="telefone" value="{{ aluno.telefone }}">
+
+        <select name="plano_id" required>
+            <option value="">Selecione o plano</option>
+
+            {% for plano in planos %}
+                <option value="{{ plano.id }}" {% if aluno.plano_id == plano.id %}selected{% endif %}>
+                    {{ plano.nome }} - R$ {{ "%.2f"|format(plano.valor) }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label for="dias_treino">Dias de treino por semana</label>
+        <select id="dias_treino" name="dias_treino" required>
+            <option value="3" {% if aluno.dias_treino == 3 %}selected{% endif %}>3 dias por semana</option>
+            <option value="5" {% if aluno.dias_treino == 5 %}selected{% endif %}>5 dias por semana</option>
+            <option value="7" {% if aluno.dias_treino == 7 %}selected{% endif %}>Livre - todos os dias</option>
+        </select>
+
+        <button type="submit">Salvar</button>
+    </form>
+
+    <a href="{{ url_for('aluno.listar') }}">Voltar</a>
+</div>
+
+</body>
+</html>

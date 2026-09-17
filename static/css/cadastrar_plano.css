@@ -1,0 +1,117 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: #e0f2fe;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+}
+
+.form-container {
+    width: min(450px, 100%);
+    background: #ffffff;
+    padding: 32px;
+    border-radius: 8px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+}
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+    align-items: center;
+    background: linear-gradient(135deg, #111318 0%, #1c2129 100%);
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px;
+}
+
+.form-container {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    box-shadow: 0 18px 40px rgba(17, 24, 39, 0.12);
+    padding: 30px 28px 24px;
+    width: min(640px, 100%);
+}
+
+.form-container h1 {
+    color: #16181d;
+    font-size: clamp(1.8rem, 2vw, 2.2rem);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.form-container form {
+    display: grid;
+    gap: 14px;
+}
+
+.form-container input,
+.form-container select,
+.form-container textarea,
+.form-container button {
+    border-radius: 10px;
+    font-size: 15px;
+    min-height: 46px;
+    width: 100%;
+}
+
+.form-container input,
+.form-container select,
+.form-container textarea {
+    background: #ffffff;
+    border: 1px solid #d1d5db;
+    color: #16181d;
+    padding: 0 12px;
+}
+
+.form-container textarea {
+    min-height: 108px;
+    padding-top: 10px;
+    resize: vertical;
+}
+
+.form-container input:focus,
+.form-container select:focus,
+.form-container textarea:focus {
+    border-color: #e5ad27;
+    outline: 3px solid rgba(229, 173, 39, 0.14);
+}
+
+.form-container label {
+    color: #374151;
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.form-container button {
+    background: #e5ad27;
+    border: none;
+    color: #111111;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.form-container a {
+    color: #16181d;
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 14px;
+    text-align: center;
+    text-decoration: none;
+}

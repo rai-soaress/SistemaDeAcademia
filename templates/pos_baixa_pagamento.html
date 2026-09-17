@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baixa Confirmada</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pagamentos.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+    <div>
+        <span>Financeiro</span>
+        <h1>Baixa confirmada</h1>
+    </div>
+
+    <nav>
+        <a href="{{ url_for('aluno.listar') }}">Alunos</a>
+        <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+    </nav>
+</header>
+
+<main class="page">
+    <section class="decision-card">
+        <span class="badge badge-paid">Pago</span>
+
+        <h2>{{ pagamento.aluno.nome }}</h2>
+
+        {% if pagamento.aluno.plano %}
+            <p>Plano atual: {{ pagamento.aluno.plano.nome }}</p>
+        {% endif %}
+
+        <div class="decision-summary">
+            <div>
+                <span>Valor recebido</span>
+                <strong>R$ {{ "%.2f"|format(pagamento.valor) }}</strong>
+            </div>
+
+            <div>
+                <span>Proxima cobranca</span>
+                <strong>{{ proxima_data.strftime("%d/%m/%Y") }}</strong>
+            </div>
+        </div>
+
+        <div class="decision-actions">
+            <form method="POST" action="{{ url_for('pagamento.gerar_proxima', id=pagamento.id) }}">
+                <button type="submit" class="btn-baixa">
+                    Gerar cobranca do proximo mes
+                </button>
+            </form>
+
+            <form method="POST" action="{{ url_for('pagamento.cancelar_plano', id=pagamento.id) }}">
+                <button
+                    type="submit"
+                    class="btn-cancelar"
+                    data-confirm="Cancelar o plano e excluir permanentemente este aluno e seus pagamentos, treinos e avaliacoes do sistema?"
+                >
+                    Cancelar plano
+                </button>
+            </form>
+        </div>
+    </section>
+</main>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

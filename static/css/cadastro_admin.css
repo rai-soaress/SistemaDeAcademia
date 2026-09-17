@@ -1,0 +1,90 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+    align-items: center;
+    background: linear-gradient(135deg, #111318 0%, #1c2129 100%);
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px;
+}
+
+.form-container {
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(229, 173, 39, 0.16);
+    border-radius: 20px;
+    box-shadow: 0 18px 40px rgba(17, 24, 39, 0.12);
+    padding: 30px 28px 22px;
+    width: min(460px, 100%);
+}
+
+.brand-lockup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.brand-logo,
+.brand-logo--hero {
+    display: block;
+    max-width: 160px;
+    max-height: 110px;
+    object-fit: contain;
+}
+
+.form-container h1 {
+    color: #16181d;
+    font-size: clamp(1.6rem, 2vw, 2rem);
+    margin-top: 8px;
+    text-align: center;
+}
+
+.form-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.form-container input {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    color: #16181d;
+    font-size: 15px;
+    min-height: 46px;
+    padding: 0 14px;
+    width: 100%;
+}
+
+.form-container input:focus {
+    border-color: #e5ad27;
+    outline: 3px solid rgba(229, 173, 39, 0.14);
+}
+
+.form-container button {
+    background: #e5ad27;
+    border: none;
+    border-radius: 10px;
+    color: #111111;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    min-height: 46px;
+    width: 100%;
+}
+
+.form-container a {
+    color: #16181d;
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 16px;
+    text-align: center;
+    text-decoration: none;
+}

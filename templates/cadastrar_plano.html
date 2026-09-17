@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Plano</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cadastrar_plano.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+
+<div class="form-container">
+    <h1>Cadastrar Plano</h1>
+
+    <form method="POST">
+        <input
+            type="text"
+            name="nome"
+            placeholder="Nome do plano"
+            required
+        >
+
+        <input
+            type="number"
+            step="0.01"
+            name="valor"
+            placeholder="Valor"
+            required
+        >
+
+        <label for="dias_treino">Dias de treino por semana</label>
+        <select id="dias_treino" name="dias_treino" required>
+            <option value="3">3 dias por semana</option>
+            <option value="5">5 dias por semana</option>
+            <option value="7">Livre - todos os dias</option>
+        </select>
+
+        <textarea
+            name="descricao"
+            placeholder="Descricao"
+        ></textarea>
+
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <a href="{{ url_for('plano.listar') }}">Voltar</a>
+</div>
+
+</body>
+</html>

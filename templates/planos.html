@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/internal_header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/planos.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+    <div class="brand-wrap">
+        <img class="logo-interna" src="{{ url_for('static', filename='img/logo_fit_trainer.png') }}" alt="Fit Trainer logo">
+        <div>
+            <span>Configuracao</span>
+            <h1>Planos</h1>
+        </div>
+    </div>
+
+    <nav>
+        <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+        <a class="primary" href="{{ url_for('plano.cadastrar') }}">Cadastrar plano</a>
+    </nav>
+</header>
+
+<main class="page">
+    {% if planos %}
+        <section class="plans-grid">
+            {% for plano in planos %}
+                <article class="plan-card">
+                    <div class="plan-header">
+                        <div>
+                            <span>Plano</span>
+                            <h2>{{ plano.nome }}</h2>
+                        </div>
+
+                        <strong>R$ {{ "%.2f"|format(plano.valor) }}</strong>
+                    </div>
+
+                    <div class="plan-meta">
+                        <p>{{ plano.dias_treino }} dias de treino por semana</p>
+                        <p>{{ plano.descricao or "Sem descricao" }}</p>
+                    </div>
+
+                    <form method="post" action="{{ url_for('plano.excluir', id=plano.id) }}" class="inline-form">
+                        <button class="delete-link excluir" data-confirm="Tem certeza que deseja excluir este plano?" type="submit">Excluir</button>
+                    </form>
+                </article>
+            {% endfor %}
+        </section>
+    {% else %}
+        <section class="empty">
+            <h2>Nenhum plano cadastrado</h2>
+            <p>Crie planos para associar alunos, pagamentos e treinos.</p>
+            <a href="{{ url_for('plano.cadastrar') }}">Cadastrar plano</a>
+        </section>
+    {% endif %}
+</main>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

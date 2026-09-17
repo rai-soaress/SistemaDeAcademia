@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treinos e Avaliacoes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/internal_header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/treinos.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+    <div class="brand-wrap">
+        <img class="logo-interna" src="{{ url_for('static', filename='img/logo_fit_trainer.png') }}" alt="Fit Trainer logo">
+        <div>
+            <span>Performance</span>
+            <h1>Treinos e Avaliacoes</h1>
+        </div>
+    </div>
+    <nav>
+        <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('treino.nova_avaliacao') }}">Nova avaliacao fisica</a>
+        <a class="primary" href="{{ url_for('treino.cadastrar') }}">Montar treino</a>
+    </nav>
+</header>
+
+<main class="page">
+    <section class="section-head">
+        <div>
+            <h2>Historico de treinos</h2>
+            <p>Treinos montados por aluno, com PDF profissional e exercicios por dia.</p>
+            <input id="buscaTreino" class="assessment-search" type="search" placeholder="Buscar aluno" aria-label="Buscar treinos pelo nome do aluno" autocomplete="off">
+        </div>
+    </section>
+
+    {% if treinos %}
+        <section class="workout-grid">
+            {% for treino in treinos %}
+                <article class="workout-card" data-aluno-treino="{{ treino.aluno.nome }}">
+                    <div class="card-header">
+                        <div>
+                            <span>{{ treino.data_criacao or "-" }}</span>
+                            <h3>{{ treino.aluno.nome }}</h3>
+                            <p>{{ treino.objetivo }} - {{ treino.frequencia_semanal }} dias por semana</p>
+                        </div>
+                        <strong>{{ treino.dias|length or 1 }} dias</strong>
+                    </div>
+
+                    {% if treino.dias %}
+                        <div class="day-list">
+                            {% for dia in treino.dias %}
+                                <details>
+                                    <summary>{{ dia.nome }} <span>{{ dia.exercicios|length }} exercicios</span></summary>
+                                    {% for exercicio in dia.exercicios %}
+                                        <div class="exercise-history">
+                                            {% if exercicio.imagem_url %}
+                                                <img src="{{ exercicio.imagem_url }}" alt="{{ exercicio.nome }}">
+                                            {% else %}
+                                                <div class="exercise-placeholder">Sem foto</div>
+                                            {% endif %}
+
+                                            <p>
+                                                <b>{{ exercicio.nome }}</b>
+                                                <span>{{ exercicio.grupo_muscular or "Geral" }}</span>
+                                                {{ exercicio.series }}x{{ exercicio.repeticoes }}
+                                                {% if exercicio.carga %}- {{ exercicio.carga }}{% endif %}
+                                                {% if exercicio.descanso %}- {{ exercicio.descanso }}{% endif %}
+                                                {% if exercicio.video_url %}
+                                                    <a href="{{ exercicio.video_url }}" data-treino-midia="video">Ver video</a>
+                                                {% elif exercicio.gif_url %}
+                                                    <a href="{{ exercicio.gif_url }}" data-treino-midia="imagem">Ver GIF</a>
+                                                {% endif %}
+                                            </p>
+                                        </div>
+                                    {% endfor %}
+                                </details>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="legacy-description">{{ treino.descricao }}</p>
+                    {% endif %}
+
+                    <div class="actions">
+                        <a href="{{ url_for('treino.gerar_pdf', id=treino.id) }}">Gerar PDF completo</a>
+                        <form method="post" action="{{ url_for('treino.excluir', id=treino.id) }}" class="inline-form">
+                            <button class="danger delete-link" data-confirm="Tem certeza que deseja excluir este treino?" type="submit">Excluir</button>
+                        </form>
+                    </div>
+                </article>
+            {% endfor %}
+        </section>
+        <p id="nenhumTreino" role="status" hidden>Nenhum treino encontrado.</p>
+    {% else %}
+        <section class="empty">
+            <h2>Nenhum treino montado</h2>
+            <p>Monte o primeiro treino usando biblioteca de exercicios e divisao por dias.</p>
+            <a href="{{ url_for('treino.cadastrar') }}">Montar treino</a>
+        </section>
+    {% endif %}
+
+    <section class="history-grid">
+        <div>
+            <h2>Avaliacoes fisicas</h2>
+            <input id="buscaAvaliacao" class="assessment-search" type="search" placeholder="Buscar aluno" aria-label="Buscar avaliacoes pelo nome do aluno" autocomplete="off">
+            {% if avaliacoes %}
+                {% for avaliacao in avaliacoes %}
+                    <article class="history-item" data-aluno-avaliacao="{{ avaliacao.aluno.nome }}">
+                        <strong>{{ avaliacao.aluno.nome }}</strong>
+                        <span>{{ avaliacao.data_avaliacao }} - IMC {{ avaliacao.imc or "-" }}</span>
+                        <a href="{{ url_for('treino.gerar_pdf_avaliacao_rota', id=avaliacao.id) }}">Baixar avaliacao em PDF</a>
+                        <form method="post" action="{{ url_for('treino.excluir_avaliacao', id=avaliacao.id) }}" class="inline-form">
+                            <button type="submit" class="danger delete-link" data-confirm="Tem certeza que deseja excluir esta avaliacao?">Excluir avaliacao</button>
+                        </form>
+                    </article>
+                {% endfor %}
+                <p id="nenhumaAvaliacao" role="status" hidden>Nenhuma avaliacao encontrada.</p>
+            {% else %}
+                <p>Nenhuma avaliacao cadastrada.</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <h2>PDFs gerados</h2>
+            {% if pdfs %}
+                {% for pdf in pdfs[:6] %}
+                    <article class="history-item">
+                        <strong>{{ pdf.aluno.nome }}</strong>
+                        <span>{{ "Avaliacao fisica" if pdf.avaliacao_id and not pdf.treino_id else "Treino" }}</span>
+                        <a href="{{ url_for('treino.baixar_pdf', id=pdf.id) }}">Baixar PDF</a>
+                        <form method="post" action="{{ url_for('treino.excluir_pdf', id=pdf.id) }}" class="inline-form">
+                            <button type="submit" class="danger delete-link" data-confirm="Tem certeza que deseja excluir este PDF?">Excluir PDF</button>
+                        </form>
+                    </article>
+                {% endfor %}
+            {% else %}
+                <p>Nenhum PDF gerado.</p>
+            {% endif %}
+        </div>
+    </section>
+</main>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script src="{{ url_for('static', filename='js/treino_midia.js') }}"></script>
+<script>
+const buscaTreino = document.getElementById("buscaTreino");
+const treinos = document.querySelectorAll("[data-aluno-treino]");
+const nenhumTreino = document.getElementById("nenhumTreino");
+
+buscaTreino.addEventListener("input", () => {
+    const termo = buscaTreino.value.trim().toLocaleLowerCase();
+    let encontrados = 0;
+
+    treinos.forEach((treino) => {
+        const encontrado = treino.dataset.alunoTreino.toLocaleLowerCase().includes(termo);
+        treino.hidden = !encontrado;
+        if (encontrado) encontrados += 1;
+    });
+
+    if (nenhumTreino) nenhumTreino.hidden = encontrados > 0;
+});
+
+const buscaAvaliacao = document.getElementById("buscaAvaliacao");
+const avaliacoes = document.querySelectorAll("[data-aluno-avaliacao]");
+const nenhumaAvaliacao = document.getElementById("nenhumaAvaliacao");
+
+buscaAvaliacao.addEventListener("input", () => {
+    const termo = buscaAvaliacao.value.trim().toLocaleLowerCase();
+    let encontrados = 0;
+
+    avaliacoes.forEach((avaliacao) => {
+        const encontrado = avaliacao.dataset.alunoAvaliacao.toLocaleLowerCase().includes(termo);
+        avaliacao.hidden = !encontrado;
+        if (encontrado) encontrados += 1;
+    });
+
+    if (nenhumaAvaliacao) nenhumaAvaliacao.hidden = encontrados > 0;
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Montar Treino</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/treinos.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+    <div>
+        <span>Montagem</span>
+        <h1>Montar treino</h1>
+    </div>
+    <nav>
+        <a href="{{ url_for('treino.listar') }}">Voltar</a>
+        <a href="{{ url_for('treino.nova_avaliacao') }}">Nova avaliacao</a>
+    </nav>
+</header>
+
+<main class="page builder-page">
+    {% for mensagem in get_flashed_messages() %}
+        <p class="api-status" role="alert">{{ mensagem }}</p>
+    {% endfor %}
+    <form class="builder-form" method="POST">
+        <section class="builder-panel">
+            <h2>Dados do treino</h2>
+            <div class="form-grid">
+                <label>
+                    Aluno
+                    <select name="aluno_id" required>
+                        <option value="">Selecione o aluno</option>
+                        {% for aluno in alunos %}
+                            <option value="{{ aluno.id }}">{{ aluno.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+
+                <label>
+                    Frequencia semanal
+                    <select id="frequencia" name="frequencia_semanal" required>
+                        <option value="3">3 vezes por semana</option>
+                        <option value="5">5 vezes por semana</option>
+                    </select>
+                </label>
+
+                <label>
+                    Objetivo
+                    <select name="objetivo" required>
+                        {% for objetivo in objetivos %}
+                            <option value="{{ objetivo }}">{{ objetivo }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+
+                <label>
+                    Responsavel tecnico
+                    <input type="text" name="responsavel_tecnico" placeholder="Nome do profissional">
+                </label>
+            </div>
+
+            <textarea name="descricao" placeholder="Observacoes gerais do treino"></textarea>
+        </section>
+
+        <section class="builder-layout">
+            <aside class="library">
+                <h2>Biblioteca de exercicios</h2>
+                <div class="filters">
+                    <input id="buscaExercicio" type="search" placeholder="Buscar exercicio">
+                    <button type="button" onclick="carregarExercicios()">Buscar na API</button>
+                </div>
+
+                <div class="category-tabs" id="categoryTabs">
+                    <button type="button" class="active" data-category="" onclick="selecionarCategoria(this)">Todos</button>
+                </div>
+
+                <label>
+                    Adicionar no dia
+                    <select id="diaAtivo">
+                        <option value="1">Segunda-feira</option>
+                        <option value="2">Terca-feira</option>
+                        <option value="3">Quarta-feira</option>
+                        <option value="4">Quinta-feira</option>
+                        <option value="5">Sexta-feira</option>
+                    </select>
+                </label>
+
+                <div class="api-status" id="apiStatus">Carregando exercicios da API...</div>
+                <small>Dados de exercicios: ExerciseDB by AscendAPI</small>
+                <div class="exercise-list" id="exerciseList">
+                </div>
+
+                <div class="custom-library-head">
+                    <h2>Meus exercicios personalizados</h2>
+                    <div class="filters">
+                        <input id="buscaPersonalizado" type="search" placeholder="Buscar por nome">
+                        <button type="button" onclick="carregarPersonalizados()">Buscar</button>
+                    </div>
+                </div>
+                <div class="api-status" id="personalizadoStatus">Nenhum exercicio personalizado carregado.</div>
+                <div class="exercise-list" id="personalizadoList"></div>
+            </aside>
+
+            <section class="schedule">
+                {% for dia in ["Segunda-feira", "Terca-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira"] %}
+                    <article class="day-box" data-day="{{ loop.index }}">
+                        <div class="day-head">
+                            <h2>{{ dia }}</h2>
+                            <button type="button" class="custom-exercise-button" data-dia="{{ loop.index }}">Exercicio personalizado</button>
+                        </div>
+                        <div class="exercise-rows" id="dia-{{ loop.index }}"></div>
+                    </article>
+                {% endfor %}
+
+                <button class="submit-btn" type="submit">Salvar treino</button>
+            </section>
+        </section>
+    </form>
+
+    <section class="custom-exercise">
+        <h2>Cadastrar exercicio personalizado</h2>
+        <p id="cadastroExercicioStatus" role="status"></p>
+        <form method="POST" action="{{ url_for('treino.exercicio_personalizado') }}" enctype="multipart/form-data">
+            <input type="text" name="nome" placeholder="Nome do exercicio (opcional)">
+            <input type="text" name="grupo_muscular" placeholder="Grupo muscular (opcional)">
+            <input type="text" name="equipamento" placeholder="Equipamento">
+            <input type="text" name="musculo_principal" placeholder="Musculo principal">
+            <input type="text" name="musculos_secundarios" placeholder="Musculos secundarios">
+            <input type="url" name="imagem_url" placeholder="URL da imagem">
+            <input type="url" name="gif_url" placeholder="URL do GIF">
+            <input type="url" name="video_url" placeholder="URL do video">
+            <label>Ou enviar uma imagem <input type="file" name="imagem_arquivo" accept="image/jpeg,image/png,image/webp"></label>
+            <label>Ou enviar um video <input type="file" name="video_arquivo" accept="video/mp4,video/webm,video/quicktime,video/x-msvideo"></label>
+            <button type="submit">Cadastrar exercicio</button>
+        </form>
+    </section>
+</main>
+
+<dialog class="media-modal" id="mediaModal">
+    <button type="button" class="modal-close" onclick="fecharMidia()">Voltar ao treino</button>
+    <h2 id="mediaTitle">Exercicio</h2>
+    <div id="mediaBody"></div>
+</dialog>
+
+<script>
+const frequencia = document.getElementById("frequencia");
+const diaAtivo = document.getElementById("diaAtivo");
+const busca = document.getElementById("buscaExercicio");
+const buscaPersonalizado = document.getElementById("buscaPersonalizado");
+const exerciseList = document.getElementById("exerciseList");
+const personalizadoList = document.getElementById("personalizadoList");
+const apiStatus = document.getElementById("apiStatus");
+const personalizadoStatus = document.getElementById("personalizadoStatus");
+const mediaModal = document.getElementById("mediaModal");
+const mediaTitle = document.getElementById("mediaTitle");
+const mediaBody = document.getElementById("mediaBody");
+let exerciciosApi = [];
+let exerciciosPersonalizados = [];
+let categoriaAtiva = "";
+let origemAtual = "api";
+
+function diasVisiveis() {
+    return frequencia.value === "5" ? [1, 2, 3, 4, 5] : [1, 3, 5];
+}
+
+function atualizarDias() {
+    const visiveis = diasVisiveis();
+    document.querySelectorAll(".day-box").forEach((box) => {
+        box.hidden = !visiveis.includes(Number(box.dataset.day));
+        box.querySelectorAll("input").forEach((input) => input.disabled = box.hidden);
+    });
+    diaAtivo.querySelectorAll("option").forEach((option) => {
+        option.hidden = !visiveis.includes(Number(option.value));
+    });
+    if (!visiveis.includes(Number(diaAtivo.value))) {
+        diaAtivo.value = String(visiveis[0]);
+    }
+}
+
+function linhaBase(dia, dados) {
+    const imagem = dados.imagem_url || "";
+    const video = dados.video_url || "";
+    const midia = imagem
+        ? `<img class="row-media" src="${escapeAttr(imagem)}" alt="${escapeAttr(dados.name || "Exercicio")}">`
+        : dados.gif_url
+            ? `<a class="row-video" href="${escapeAttr(dados.gif_url)}" data-treino-midia="imagem">Ver GIF</a>`
+        : video
+            ? `<a class="row-video" href="${escapeAttr(video)}" data-treino-midia="video">Ver video</a>`
+            : `<span class="row-empty-media">Sem midia</span>`;
+
+    return `
+        <div class="exercise-row">
+            <input type="hidden" name="exercicio_id_${dia}" value="${dados.id || ""}">
+            <input type="hidden" name="grupo_muscular_${dia}" value="${escapeAttr(dados.grupo_muscular || "")}">
+            <input type="hidden" name="equipamento_${dia}" value="${escapeAttr(dados.equipamento || "")}">
+            <input type="hidden" name="imagem_url_${dia}" value="${escapeAttr(imagem)}">
+            <input type="hidden" name="gif_url_${dia}" value="${escapeAttr(dados.gif_url || "")}">
+            <input type="hidden" name="video_url_${dia}" value="${escapeAttr(dados.video_url || "")}">
+            ${midia}
+            <input type="text" name="nome_personalizado_${dia}" value="${escapeAttr(dados.nome || "")}" placeholder="Exercicio" required>
+            <input type="text" name="series_${dia}" value="3" placeholder="Series">
+            <input type="text" name="repeticoes_${dia}" value="12" placeholder="Repeticoes">
+            <input type="text" name="carga_${dia}" placeholder="Carga">
+            <input type="text" name="descanso_${dia}" placeholder="Descanso">
+            <input type="text" name="observacoes_${dia}" placeholder="Observacoes">
+            <button type="button" onclick="this.closest('.exercise-row').remove()">Remover</button>
+        </div>
+    `;
+}
+
+function adicionarExercicio(botao) {
+    const dia = diaAtivo.value;
+    const exercicio = [...exerciciosApi, ...exerciciosPersonalizados]
+        .find((item) => item.id === botao.dataset.id) || {};
+    document.getElementById(`dia-${dia}`).insertAdjacentHTML("beforeend", linhaBase(dia, {
+        id: "",
+        nome: botao.dataset.name,
+        grupo_muscular: exercicio.grupo_muscular || botao.dataset.group || "",
+        equipamento: exercicio.equipamento || botao.dataset.equipment || "",
+        imagem_url: exercicio.imagem_url || "",
+        gif_url: exercicio.gif_url || "",
+        video_url: exercicio.video_url || "",
+    }));
+}
+
+function adicionarLinhaPersonalizada(dia) {
+    document.getElementById(`dia-${dia}`).insertAdjacentHTML("beforeend", linhaBase(dia, {}));
+}
+
+function escapeHtml(valor) {
+    return String(valor || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function escapeAttr(valor) {
+    return escapeHtml(valor);
+}
+
+function renderizarExercicios(exercicios, origem) {
+    exerciciosApi = exercicios;
+    origemAtual = origem;
+    apiStatus.textContent = origem === "api"
+        ? "Exercicios carregados pela ExerciseDB."
+        : "API indisponivel agora. Mostrando biblioteca local.";
+
+    const categorias = [...new Set(exercicios.map((exercicio) => exercicio.grupo_muscular || "Geral"))].sort();
+    if (!categorias.includes(categoriaAtiva)) categoriaAtiva = "";
+    if (!exercicios.length) {
+        document.getElementById("categoryTabs").replaceChildren();
+        exerciseList.innerHTML = `<p class="api-empty">Nenhum exercicio encontrado.</p>`;
+        return;
+    }
+
+    document.getElementById("categoryTabs").innerHTML = `
+        <button type="button" class="${categoriaAtiva ? "" : "active"}" data-category="" onclick="selecionarCategoria(this)">Todos</button>
+        ${categorias.map((categoria) => `
+            <button type="button" class="${categoriaAtiva === categoria ? "active" : ""}" data-category="${escapeAttr(categoria)}" onclick="selecionarCategoria(this)">
+                ${escapeHtml(categoria)}
+            </button>
+        `).join("")}
+    `;
+
+    const exerciciosFiltrados = categoriaAtiva
+        ? exercicios.filter((exercicio) => (exercicio.grupo_muscular || "Geral") === categoriaAtiva)
+        : exercicios;
+
+    const porCategoria = exerciciosFiltrados.reduce((grupos, exercicio) => {
+        const categoria = exercicio.grupo_muscular || "Geral";
+        grupos[categoria] = grupos[categoria] || [];
+        grupos[categoria].push(exercicio);
+        return grupos;
+    }, {});
+
+    exerciseList.innerHTML = Object.entries(porCategoria).map(([categoria, itens]) => `
+        <section class="exercise-group">
+            <h3>${escapeHtml(categoria)}</h3>
+            ${itens.map((exercicio) => {
+        const midia = exercicio.imagem_url
+            ? `<img src="${escapeAttr(exercicio.imagem_url)}" alt="${escapeAttr(exercicio.nome)}">`
+            : `<div class="exercise-placeholder">Sem foto</div>`;
+        const temMidia = exercicio.imagem_url || exercicio.video_url || exercicio.gif_url;
+
+        return `
+            <article class="exercise-card">
+                ${midia}
+                <div>
+                    <span>${escapeHtml(exercicio.grupo_muscular || "Geral")}</span>
+                    <h3>${escapeHtml(exercicio.nome)}</h3>
+                    <p>${escapeHtml(exercicio.equipamento || "Sem equipamento")}</p>
+                </div>
+                <div class="exercise-actions">
+                    <button
+                        type="button"
+                        data-id="${escapeAttr(exercicio.id)}"
+                        data-name="${escapeAttr(exercicio.nome)}"
+                        data-group="${escapeAttr(exercicio.grupo_muscular || "")}"
+                        data-equipment="${escapeAttr(exercicio.equipamento || "")}"
+                        onclick="adicionarExercicio(this)"
+                    >
+                        Adicionar
+                    </button>
+                    <button type="button" ${temMidia ? "" : "disabled"} onclick="abrirMidia('${escapeAttr(exercicio.id)}')">
+                        Ver midia
+                    </button>
+                </div>
+            </article>
+        `;
+            }).join("")}
+        </section>
+    `).join("");
+}
+
+function selecionarCategoria(botao) {
+    categoriaAtiva = botao.dataset.category || "";
+    renderizarExercicios(exerciciosApi, origemAtual);
+}
+
+async function carregarExercicios() {
+    apiStatus.textContent = "Buscando exercicios na API...";
+    const params = new URLSearchParams({
+        busca: busca.value,
+        limite: "24",
+    });
+    try {
+        const resposta = await fetch(`{{ url_for('treino.api_exercicios') }}?${params.toString()}`);
+        if (!resposta.ok) throw new Error("Falha ao carregar");
+        const dados = await resposta.json();
+        renderizarExercicios(dados.exercicios || [], dados.origem);
+    } catch (erro) {
+        apiStatus.textContent = "Nao foi possivel carregar os exercicios. Tente buscar novamente ou adicione um exercicio personalizado ao dia.";
+    }
+}
+
+function renderizarPersonalizados(exercicios) {
+    exerciciosPersonalizados = exercicios;
+    personalizadoStatus.textContent = exercicios.length
+        ? `${exercicios.length} exercicio(s) personalizado(s) encontrado(s).`
+        : "Nenhum exercicio personalizado encontrado.";
+
+    personalizadoList.innerHTML = exercicios.map((exercicio) => {
+        const midia = exercicio.imagem_url
+            ? `<img src="${escapeAttr(exercicio.imagem_url)}" alt="${escapeAttr(exercicio.nome)}">`
+            : `<div class="exercise-placeholder">Sem foto</div>`;
+        const temMidia = exercicio.imagem_url || exercicio.video_url || exercicio.gif_url;
+
+        return `
+            <article class="exercise-card">
+                ${midia}
+                <div>
+                    <span>${escapeHtml(exercicio.grupo_muscular || "Geral")}</span>
+                    <h3>${escapeHtml(exercicio.nome)}</h3>
+                    <p>${escapeHtml(exercicio.equipamento || "Sem equipamento")}</p>
+                </div>
+                <div class="exercise-actions">
+                    <button type="button" data-id="${escapeAttr(exercicio.id)}" data-name="${escapeAttr(exercicio.nome)}" data-group="${escapeAttr(exercicio.grupo_muscular || "")}" data-equipment="${escapeAttr(exercicio.equipamento || "")}" onclick="adicionarExercicio(this)">Adicionar</button>
+                    <button type="button" ${temMidia ? "" : "disabled"} onclick="abrirMidia('${escapeAttr(exercicio.id)}')">Ver midia</button>
+                </div>
+            </article>
+        `;
+    }).join("");
+}
+
+async function carregarPersonalizados() {
+    const params = new URLSearchParams({ busca: buscaPersonalizado.value });
+    try {
+        const resposta = await fetch(`{{ url_for('treino.api_exercicios_personalizados') }}?${params.toString()}`);
+        if (!resposta.ok) throw new Error("Falha ao carregar");
+        const dados = await resposta.json();
+        renderizarPersonalizados(dados.exercicios || []);
+    } catch (erro) {
+        personalizadoStatus.textContent = "Nao foi possivel carregar seus exercicios. Tente buscar novamente.";
+    }
+}
+
+function abrirMidia(id) {
+    const exercicio = [...exerciciosApi, ...exerciciosPersonalizados]
+        .find((item) => item.id === id);
+
+    if (!exercicio) {
+        return;
+    }
+
+    mediaTitle.textContent = exercicio.nome;
+
+    if (exercicio.video_url) {
+        mediaBody.innerHTML = `<video src="${escapeAttr(exercicio.video_url)}" controls></video>`;
+    } else if (exercicio.gif_url) {
+        mediaBody.innerHTML = `<img src="${escapeAttr(exercicio.gif_url)}" alt="${escapeAttr(exercicio.nome)}">`;
+    } else if (exercicio.imagem_url) {
+        mediaBody.innerHTML = `<img src="${escapeAttr(exercicio.imagem_url)}" alt="${escapeAttr(exercicio.nome)}">`;
+    } else {
+        mediaBody.innerHTML = `<p>Este exercicio nao possui midia na API.</p>`;
+    }
+
+    mediaModal.showModal();
+}
+
+function fecharMidia() {
+    mediaModal.close();
+}
+
+mediaModal.addEventListener("close", () => {
+    mediaBody.replaceChildren();
+});
+
+frequencia.addEventListener("change", atualizarDias);
+const cadastroExercicio = document.querySelector(".custom-exercise form");
+cadastroExercicio.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const botao = cadastroExercicio.querySelector("button[type='submit']");
+    const status = document.getElementById("cadastroExercicioStatus");
+    botao.disabled = true;
+    status.textContent = "Salvando exercicio...";
+    try {
+        const resposta = await fetch(cadastroExercicio.action, {
+            method: "POST",
+            headers: { "X-Requested-With": "XMLHttpRequest" },
+            body: new FormData(cadastroExercicio),
+        });
+        const dados = await resposta.json();
+        if (!resposta.ok) throw new Error(dados.erro || "Nao foi possivel cadastrar o exercicio.");
+        buscaPersonalizado.value = "";
+        renderizarPersonalizados(dados.exercicios);
+        cadastroExercicio.reset();
+        status.textContent = "Exercicio cadastrado. Voce ja pode adiciona-lo ao treino na biblioteca.";
+    } catch (erro) {
+        status.textContent = erro.message || "Falha ao cadastrar. Tente novamente.";
+    } finally {
+        botao.disabled = false;
+    }
+});
+document.querySelector(".builder-form").addEventListener("submit", (event) => {
+    const linhas = document.querySelectorAll(".day-box:not([hidden]) .exercise-row");
+    if (!linhas.length) {
+        event.preventDefault();
+        alert("Adicione pelo menos um exercicio antes de salvar o treino.");
+    }
+});
+document.querySelectorAll(".custom-exercise-button").forEach((botao) => {
+    botao.addEventListener("click", () => adicionarLinhaPersonalizada(Number(botao.dataset.dia)));
+});
+busca.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        carregarExercicios();
+    }
+});
+buscaPersonalizado.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        carregarPersonalizados();
+    }
+});
+atualizarDias();
+carregarExercicios();
+carregarPersonalizados();
+</script>
+<script src="{{ url_for('static', filename='js/treino_midia.js') }}"></script>
+</body>
+</html>

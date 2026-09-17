@@ -1,0 +1,542 @@
+:root {
+    --bg-main: #f3f5f7;
+    --bg-card: #ffffff;
+    --bg-muted: #f8fafc;
+    --text-primary: #16181d;
+    --text-secondary: #6b7280;
+    --border: #e5e7eb;
+    --primary: #e5ad27;
+    --primary-hover: #cf981d;
+    --success: #16a34a;
+    --danger: #dc2626;
+    --warning: #d97706;
+    --shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    --radius: 16px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: var(--bg-main);
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button,
+a {
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.topbar {
+    align-items: center;
+    background: linear-gradient(135deg, #14171d 0%, #111318 100%);
+    border-bottom: 1px solid rgba(229, 173, 39, 0.2);
+    color: #ffffff;
+    display: flex;
+    gap: 18px;
+    justify-content: space-between;
+    min-height: 74px;
+    padding: 18px 28px;
+}
+
+.topbar > div:first-child,
+.brand-wrap {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+}
+
+.topbar h1 {
+    color: #ffffff;
+    font-size: clamp(1.4rem, 2vw, 2rem);
+    line-height: 1.2;
+    margin-top: 4px;
+}
+
+.topbar span,
+.eyebrow {
+    color: var(--primary);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+.logo-interna,
+.brand-logo--header {
+    background: #ffffff;
+    border-radius: 12px;
+    display: block;
+    max-height: 72px;
+    max-width: 115px;
+    object-fit: contain;
+    padding: 4px;
+}
+
+.topbar nav {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.topbar nav a {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    color: #e5e7eb;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 14px;
+    text-decoration: none;
+}
+
+.topbar nav a:hover {
+    border-color: rgba(229, 173, 39, 0.45);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.topbar nav a.primary,
+.topbar nav a:last-child {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #111111;
+    font-weight: 700;
+}
+
+.page,
+.dashboard {
+    margin: 28px auto 56px;
+    width: min(1480px, calc(100% - 48px));
+}
+
+.app-card,
+.form-container,
+.form-card,
+.student-history,
+.decision-card,
+.plan-card,
+.workout-card,
+.expense-card,
+.expense-history,
+.empty,
+.financial-table,
+.area-info {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.app-card {
+    padding: 22px;
+}
+
+.decision-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin: 0 auto;
+    max-width: 760px;
+    padding: 28px;
+}
+
+.decision-card h2 {
+    color: var(--text-primary);
+    font-size: clamp(1.5rem, 2vw, 2rem);
+    margin-top: 12px;
+}
+
+.decision-card > p {
+    color: var(--text-secondary);
+    margin-top: 6px;
+}
+
+.decision-summary {
+    background: var(--bg-muted);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 22px;
+    padding: 16px;
+}
+
+.decision-summary span {
+    color: var(--text-secondary);
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.decision-summary strong {
+    color: var(--text-primary);
+    display: block;
+    font-size: 1.4rem;
+    margin-top: 6px;
+}
+
+.decision-actions form {
+    display: inline-flex;
+}
+
+.summary-cards {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-bottom: 20px;
+}
+
+.summary-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    min-height: 118px;
+    padding: 18px;
+}
+
+.summary-card span {
+    color: var(--text-secondary);
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.summary-card strong {
+    color: var(--text-primary);
+    display: block;
+    font-size: 2rem;
+    margin-top: 14px;
+}
+
+.summary-card.success strong {
+    color: var(--success);
+}
+
+.summary-card.warning strong {
+    color: var(--warning);
+}
+
+.summary-card.danger strong {
+    color: var(--danger);
+}
+
+.app-heading h1,
+.app-heading h2,
+.section-head h2,
+.form-container h1,
+.form-card h1 {
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+}
+
+.app-heading p,
+.section-head p,
+.form-container p,
+.form-card p {
+    color: var(--text-secondary);
+    margin-top: 6px;
+}
+
+.form-container,
+.form-card {
+    margin: 28px auto 56px;
+    max-width: 760px;
+    padding: 28px;
+}
+
+.form-container form,
+.form-card form,
+.assessment-form,
+.builder-form {
+    display: grid;
+    gap: 14px;
+}
+
+.form-container input,
+.form-container select,
+.form-container textarea,
+.form-card input,
+.form-card select,
+.form-card textarea,
+.assessment-form input,
+.assessment-form select,
+.assessment-form textarea,
+.builder-form input,
+.builder-form select,
+.builder-form textarea,
+input.app-field,
+select.app-field,
+textarea.app-field {
+    background: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-size: 15px;
+    min-height: 46px;
+    padding: 0 12px;
+    width: 100%;
+}
+
+.form-container textarea,
+.form-card textarea,
+.assessment-form textarea,
+.builder-form textarea,
+textarea.app-field {
+    min-height: 108px;
+    padding-top: 10px;
+    resize: vertical;
+}
+
+.form-container input:focus,
+.form-container select:focus,
+.form-container textarea:focus,
+.form-card input:focus,
+.form-card select:focus,
+.form-card textarea:focus,
+.assessment-form input:focus,
+.assessment-form select:focus,
+.assessment-form textarea:focus,
+.builder-form input:focus,
+.builder-form select:focus,
+.builder-form textarea:focus,
+input.app-field:focus,
+select.app-field:focus,
+textarea.app-field:focus {
+    border-color: var(--primary);
+    outline: 3px solid rgba(229, 173, 39, 0.14);
+}
+
+.form-container label,
+.form-card label,
+.assessment-form label,
+.builder-form label {
+    color: #374151;
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.form-container button,
+.form-card button,
+.submit-btn,
+.primary-action,
+.btn,
+.btn-baixa,
+.action-button {
+    align-items: center;
+    background: var(--primary);
+    border: none;
+    border-radius: 10px;
+    color: #111111;
+    cursor: pointer;
+    display: inline-flex;
+    font-size: 14px;
+    font-weight: 700;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0 14px;
+    text-decoration: none;
+}
+
+.form-container button:hover,
+.form-card button:hover,
+.submit-btn:hover,
+.primary-action:hover,
+.btn:hover,
+.btn-baixa:hover,
+.action-button:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+.secondary,
+.btn-cancelar,
+.cancel-button {
+    align-items: center;
+    background: #f3f4f6;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-primary);
+    display: inline-flex;
+    font-weight: 700;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0 14px;
+    text-decoration: none;
+}
+
+.danger,
+.delete-link,
+.excluir {
+    background: rgba(220, 38, 38, 0.08);
+    border: 1px solid rgba(220, 38, 38, 0.16);
+    border-radius: 10px;
+    color: var(--danger);
+    cursor: pointer;
+    font-weight: 700;
+    min-height: 38px;
+    padding: 0 12px;
+}
+
+.app-table,
+table {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-collapse: collapse;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    width: 100%;
+}
+
+.app-table th,
+.app-table td,
+th,
+td {
+    border-bottom: 1px solid var(--border);
+    padding: 14px 16px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.app-table th,
+th {
+    background: #f8fafc;
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.app-table td,
+td {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.app-table tbody tr:hover,
+tbody tr:hover {
+    background: #fafafa;
+}
+
+.badge,
+.status {
+    align-items: center;
+    border-radius: 999px;
+    display: inline-flex;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 10px;
+    text-transform: uppercase;
+}
+
+.badge-paid,
+.status-pago {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.badge-pending,
+.status-pendente {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.badge-late,
+.status-atrasado {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.grid,
+.form-grid {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.actions,
+.decision-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+@media (max-width: 900px) {
+    .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 18px;
+    }
+
+    .topbar nav,
+    .topbar nav a {
+        width: 100%;
+    }
+
+    .topbar nav a {
+        text-align: center;
+    }
+}
+
+@media (max-width: 720px) {
+    .page,
+    .dashboard {
+        margin-top: 20px;
+        width: min(100% - 24px, 560px);
+    }
+
+    .grid,
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .summary-cards,
+    .decision-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .form-container,
+    .form-card {
+        padding: 22px 18px;
+    }
+
+    .decision-card {
+        padding: 22px 18px;
+    }
+
+    .decision-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .app-table,
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}

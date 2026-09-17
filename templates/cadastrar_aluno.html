@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Aluno</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cadastrar_aluno.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+
+<div class="form-container">
+    <h1>Cadastrar Aluno</h1>
+
+    <form method="POST">
+        <input type="text" name="nome" placeholder="Nome" required>
+
+        <input type="email" name="email" placeholder="Email">
+
+        <input type="text" name="telefone" placeholder="Telefone">
+
+        <select name="plano_id" required>
+            <option value="">Selecione o plano</option>
+
+            {% for plano in planos %}
+                <option value="{{ plano.id }}">
+                    {{ plano.nome }} - R$ {{ "%.2f"|format(plano.valor) }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label for="dias_treino">Dias de treino por semana</label>
+        <select id="dias_treino" name="dias_treino" required>
+            <option value="3">3 dias por semana</option>
+            <option value="5">5 dias por semana</option>
+            <option value="7">Livre - todos os dias</option>
+        </select>
+
+        <label for="data_vencimento">Data de pagamento</label>
+        <input
+            id="data_vencimento"
+            type="date"
+            name="data_vencimento"
+            value="{{ data_atual }}"
+            required
+        >
+
+        <p class="hint">
+            Ao cadastrar, o sistema cria uma cobranca pendente automaticamente. Depois e so clicar em Dar baixa quando o aluno pagar.
+        </p>
+
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <a href="{{ url_for('aluno.listar') }}">Voltar</a>
+</div>
+
+</body>
+</html>
