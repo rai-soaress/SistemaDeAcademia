@@ -13,10 +13,10 @@ from routes.pagamento_routes import pagamento_bp
 from routes.treino_routes import treino_bp
 from routes.despesa_routes import despesa_bp
 
-app = Flask(__name__)
+app = Flask(__name__, instance_path=Config.INSTANCE_PATH)
 app.config.from_object(Config)
 
-os.makedirs("instance", exist_ok=True)
+os.makedirs(app.instance_path, exist_ok=True)
 
 db.init_app(app)
 
@@ -42,7 +42,7 @@ def exigir_login():
 def index():
     return redirect(url_for("auth.login"))
 
-with app.app_context():
+def inicializar_banco():
     db.create_all()
 
     inspector = inspect(db.engine)
@@ -86,6 +86,18 @@ with app.app_context():
             text("ALTER TABLE treinos ADD COLUMN responsavel_tecnico VARCHAR(100)")
         )
         db.session.commit()
+
+@app.cli.command("init-db")
+def init_db_command():
+    """Cria as tabelas e aplica ajustes existentes sem apagar registros."""
+    inicializar_banco()
+    print("Banco inicializado com sucesso.")
+
+
+if app.config["AUTO_INIT_DB"]:
+    with app.app_context():
+        inicializar_banco()
+
 
 if __name__ == "__main__":
     app.run(debug=True)

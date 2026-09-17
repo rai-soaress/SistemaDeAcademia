@@ -12,3 +12,5 @@ instance/
 .pytest_cache/
 .idea/
 .vscode/
+public/
+.vercel/
