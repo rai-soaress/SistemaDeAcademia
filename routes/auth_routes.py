@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app
+from sqlalchemy.exc import SQLAlchemyError
 import secrets
 import hmac
 from services.recuperacao_service import criar_token, validar_token, enviar_recuperacao
@@ -92,37 +93,33 @@ def cadastro_admin():
 
 @auth_bp.route("/registrar-admin", methods=["POST"])
 def registrar_admin():
-    nome = request.form.get("nome")
-    email = request.form.get("email")
-    senha = request.form.get("senha")
+    nome = request.form.get("nome", "").strip()
+    email = request.form.get("email", "").strip()
+    senha = request.form.get("senha", "")
 
-    if not (
-        senha
-        and len(senha) >= 8
-        and any(c.isupper() for c in senha)
-        and any(c.islower() for c in senha)
-        and any(c.isdigit() for c in senha)
-        and any(not c.isalnum() and not c.isspace() for c in senha)
-    ):
-        flash("A senha deve ter pelo menos 8 caracteres, com letra maiúscula, letra minúscula, número e símbolo.")
-        return redirect(url_for("auth.cadastro_admin"))
+    def erro(mensagem, status=400):
+        return render_template("cadastro_admin.html", erro=mensagem, nome=nome, email=email), status
 
-    existe = Usuario.query.filter_by(email=email).first()
+    if not nome or len(nome) > 100:
+        return erro("Informe um nome de até 100 caracteres.")
+    if len(email) > 100 or "@" not in email or any(c.isspace() for c in email):
+        return erro("Informe um e-mail válido de até 100 caracteres.")
+    if not senha_forte(senha):
+        return erro("A senha deve ter pelo menos 8 caracteres, com letra maiúscula, letra minúscula, número e símbolo. Digite uma nova senha.")
 
-    if existe:
-        flash("Esse email já está cadastrado.")
-        return redirect(url_for("auth.cadastro_admin"))
+    try:
+        existe = Usuario.query.filter_by(email=email).first()
+        if existe:
+            return erro("Esse e-mail já está cadastrado. Entre na sua conta ou use Esqueci minha senha.", 409)
+        novo = Usuario(nome=nome, email=email, senha=generate_password_hash(senha))
+        db.session.add(novo)
+        db.session.commit()
+    except SQLAlchemyError as exc:
+        db.session.rollback()
+        current_app.logger.error("Falha ao cadastrar administrador: %s", type(exc).__name__)
+        return erro("Não foi possível salvar a conta no momento. Tente novamente. Se continuar, informe o horário da tentativa ao responsável pelo sistema.", 503)
 
-    novo = Usuario(
-        nome=nome,
-        email=email,
-        senha=generate_password_hash(senha),
-    )
-
-    db.session.add(novo)
-    db.session.commit()
-
-    flash("Administrador cadastrado com sucesso.")
+    flash("Administrador cadastrado com sucesso. Entre com seu e-mail e senha.")
     return redirect(url_for("auth.login"))
 
 @auth_bp.route("/sair")

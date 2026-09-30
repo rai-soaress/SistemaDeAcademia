@@ -15,13 +15,14 @@
         <h1>Cadastrar Administrador</h1>
     </div>
 
+    {% if erro %}<p class="cadastro-erro" role="alert">{{ erro }}</p>{% endif %}
     {% for mensagem in get_flashed_messages() %}
         <p role="alert">{{ mensagem }}</p>
     {% endfor %}
 
     <form action="{{ url_for('auth.registrar_admin') }}" method="POST">
-        <input type="text" name="nome" placeholder="Nome" required>
-        <input type="email" name="email" placeholder="Email" required>
+        <input type="text" name="nome" placeholder="Nome" value="{{ nome|default('') }}" maxlength="100" required>
+        <input type="email" name="email" placeholder="Email" value="{{ email|default('') }}" maxlength="100" required>
         <input type="password" name="senha" placeholder="Senha" autocomplete="new-password" minlength="8" aria-describedby="senha-requisitos" required>
         <p id="senha-requisitos">Use pelo menos 8 caracteres, com letra maiúscula, letra minúscula, número e símbolo.</p>
 
