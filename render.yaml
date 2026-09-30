@@ -12,3 +12,9 @@ services:
         generateValue: true
       - key: DATABASE_URL
         sync: false
+      - key: PUBLIC_BASE_URL
+        value: https://sistema-de-academia.onrender.com
+      - key: RESEND_API_KEY
+        sync: false
+      - key: SMTP_FROM
+        sync: false

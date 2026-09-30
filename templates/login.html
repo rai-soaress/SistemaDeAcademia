@@ -20,6 +20,9 @@
         <p>Acesse o painel para acompanhar sua academia.</p>
     </div>
 
+    {% for mensagem in get_flashed_messages() %}
+    <p role="status">{{ mensagem }}</p>
+    {% endfor %}
     <form action="{{ url_for('auth.logar') }}" method="POST">
         <label for="email">E-mail</label>
         <input id="email" type="email" name="email" placeholder="seu@email.com" autocomplete="email" required>
@@ -30,6 +33,7 @@
         <button type="submit">Entrar</button>
     </form>
 
+    <a class="register-link" href="{{ url_for('auth.recuperar_senha') }}">Esqueci minha senha</a>
     <a class="register-link" href="{{ url_for('auth.cadastro_admin') }}">Criar conta administrador</a>
 </div>
 

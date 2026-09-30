@@ -1,17 +1,14 @@
 from datetime import date
-import os
 
-from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
+from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from extensions import db
 from models.aluno import Aluno
-from models.avaliacao import AvaliacaoFisica
 from models.mensalidade import Mensalidade
 from models.pagamento import Pagamento
-from models.pdf_gerado import PdfGerado
 from models.plano import Plano
-from models.treino import Treino
 from services.pagamento_service import atualizar_pagamentos_atrasados
+from services.aluno_service import excluir_aluno
 
 
 aluno_bp = Blueprint("aluno", __name__, url_prefix="/alunos")
@@ -168,23 +165,6 @@ def editar(id):
 def excluir(id):
     aluno = Aluno.query.get_or_404(id)
 
-    Pagamento.query.filter_by(aluno_id=aluno.id).delete()
-    Treino.query.filter_by(aluno_id=aluno.id).delete()
-    Mensalidade.query.filter_by(aluno_id=aluno.id).delete()
-
-    pasta_pdf = os.path.abspath(os.path.join(current_app.instance_path, "pdfs"))
-    for pdf in PdfGerado.query.filter_by(aluno_id=aluno.id).all():
-        caminho_pdf = os.path.abspath(pdf.caminho)
-        if os.path.commonpath([pasta_pdf, caminho_pdf]) == pasta_pdf and os.path.isfile(caminho_pdf):
-            try:
-                os.remove(caminho_pdf)
-            except PermissionError:
-                pass
-        db.session.delete(pdf)
-
-    AvaliacaoFisica.query.filter_by(aluno_id=aluno.id).delete()
-
-    db.session.delete(aluno)
-    db.session.commit()
+    excluir_aluno(aluno)
 
     return redirect(url_for("aluno.listar"))

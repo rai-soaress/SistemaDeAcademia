@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar senha</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body class="login-page">
+<div class="login-container">
+    <div class="login-heading">
+        <h1>{{ 'Nova senha' if redefinir else 'Recuperar senha' }}</h1>
+        <p>{{ 'Use pelo menos 8 caracteres, com maiúscula, minúscula, número e símbolo.' if redefinir else 'Informe seu e-mail cadastrado para receber um link de recuperação.' }}</p>
+    </div>
+    {% for mensagem in get_flashed_messages() %}<p role="status">{{ mensagem }}</p>{% endfor %}
+    <form method="POST">
+        <input type="hidden" name="csrf" value="{{ session.recuperacao_csrf }}">
+        {% if redefinir %}
+        <label for="senha">Nova senha</label>
+        <input id="senha" name="senha" type="password" minlength="8" autocomplete="new-password" required>
+        <label for="confirmacao">Confirme a nova senha</label>
+        <input id="confirmacao" name="confirmacao" type="password" minlength="8" autocomplete="new-password" required>
+        {% else %}
+        <label for="email">E-mail cadastrado</label>
+        <input id="email" name="email" type="email" autocomplete="email" required>
+        {% endif %}
+        <button type="submit">{{ 'Salvar nova senha' if redefinir else 'Enviar link de recuperação' }}</button>
+    </form>
+    <a class="register-link" href="{{ url_for('auth.login') }}">Voltar para o login</a>
+</div>
+</body>
+</html>
