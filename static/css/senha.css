@@ -1,16 +1,58 @@
+.campo-senha {
+    position: relative;
+    width: 100%;
+}
+
+.login-container .campo-senha input,
+.form-container .campo-senha input {
+    padding-right: 50px;
+}
+
 .login-container button.alternar-senha,
 .form-container button.alternar-senha {
-    align-self: flex-start;
-    width: auto;
-    min-height: 36px;
-    margin: 0 0 8px;
-    padding: 6px 10px;
-    background: #f3f4f6;
-    color: #16181d;
-    border: 1px solid #9ca3af;
+    position: absolute;
+    right: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    min-height: 0;
+    margin: 0;
+    padding: 10px;
+    background: transparent;
+    color: #4b5563;
+    border: none;
     border-radius: 6px;
-    font-size: 14px;
+    box-shadow: none;
     cursor: pointer;
+}
+
+.login-container button.alternar-senha:hover,
+.form-container button.alternar-senha:hover {
+    background: transparent;
+    color: #16181d;
+    transform: translateY(-50%);
+    box-shadow: none;
+}
+
+.alternar-senha svg {
+    width: 24px;
+    height: 24px;
+}
+
+.alternar-senha .risco-olho {
+    display: none;
+}
+
+.alternar-senha[aria-pressed="true"] .risco-olho {
+    display: block;
+}
+
+.campo-senha input::-ms-reveal {
+    display: none;
 }
 
 button.alternar-senha:focus-visible {
