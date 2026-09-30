@@ -1,0 +1,19 @@
+.login-container button.alternar-senha,
+.form-container button.alternar-senha {
+    align-self: flex-start;
+    width: auto;
+    min-height: 36px;
+    margin: 0 0 8px;
+    padding: 6px 10px;
+    background: #f3f4f6;
+    color: #16181d;
+    border: 1px solid #9ca3af;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+button.alternar-senha:focus-visible {
+    outline: 3px solid #b77900;
+    outline-offset: 2px;
+}
